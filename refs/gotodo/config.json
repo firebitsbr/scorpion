@@ -1,0 +1,11 @@
+{
+    "include": [ "$GOPATH/src/github.com/corani" ],
+    "exclude": [],
+    "patterns": [ "NOTE", "TODO", "FIXME" ],
+    "assignee": "daniel",
+    "includeUnassigned": true,
+    "format": "error",
+    "output": "stdout",
+    "contextLines": 5,
+    "relRoot": "$GOPATH/src/"
+}
