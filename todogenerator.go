@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -12,12 +13,11 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"fmt"
 	"sync"
 	"unicode"
 
-	"github.com/zieckey/goini"
 	"github.com/karrick/godirwalk"
+	"github.com/zieckey/goini"
 )
 
 const (
@@ -88,12 +88,10 @@ func (td *ToDoGenerator) Generate() ([]*ToDoComment, error) {
 
 	err := godirwalk.Walk(td.root, &godirwalk.Options{
 		Callback: func(osPathname string, de *godirwalk.Dirent) error {
-			if *verboseFlag {
+			if verboseFlag {
 				fmt.Printf("%s %s\n", de.ModeType(), osPathname)
 			}
-			//if !de.Mode().IsRegular() {
-			//	return nil
-			//}
+			// skip patterns
 
 			anyMatch := false
 			for _, f := range td.filters {
@@ -113,7 +111,7 @@ func (td *ToDoGenerator) Generate() ([]*ToDoComment, error) {
 			return nil
 		},
 		ErrorCallback: func(osPathname string, err error) godirwalk.ErrorAction {
-			if *verboseFlag {
+			if verboseFlag {
 				fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
 			}
 			// For the purposes of this example, a simple SkipNode will suffice,
@@ -126,39 +124,6 @@ func (td *ToDoGenerator) Generate() ([]*ToDoComment, error) {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
-
-	/*
-	err := filepath.Walk(td.root, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if !info.Mode().IsRegular() {
-			return nil
-		}
-
-		anyMatch := false
-		for _, f := range td.filters {
-			if f.MatchString(path) {
-				anyMatch = true
-				break
-			}
-		}
-		if !anyMatch && len(td.filters) > 0 {
-			return nil
-		}
-
-		matchesCount++
-		td.commentsWG.Add(1)
-		go td.parseFile(path)
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-	*/
 
 	log.Printf("Matched files: %v", matchesCount)
 	td.commentsWG.Wait()

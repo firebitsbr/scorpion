@@ -17,3 +17,5 @@ refs
 refs/
 refs/*
 refs/**
+
+*.log

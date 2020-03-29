@@ -8,6 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/whilp/git-urls"
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 // Environment contains information about git repository
@@ -97,4 +101,37 @@ func (env *Environment) Project() string {
 		env.project = filepath.Base(project)
 	})
 	return env.project
+}
+
+// RefBranchName returns the branch name of a reference.
+// It assumes that the ref has a branch type.
+func refBranchName(ref *plumbing.Reference) string {
+	return refBranchNameStr(ref.String())
+}
+
+// RefBranchNameStr returns the branch name of a reference string.
+// It assumes that the ref has a branch type.
+func refBranchNameStr(str string) string {
+	parts := strings.Split(str, "/")
+	return strings.Join(parts[2:], "/")
+}
+
+func getRemoteURLPath(path string) (string, error) {
+	if path == "" {
+		path = "."
+	}
+	// We instantiate a new repository targeting the given path (the .git folder)
+	r, err := git.PlainOpen(path)
+	if err != nil {
+		return "", err
+	}
+	cfg, err := r.Config()
+	if err != nil {
+		return "", err
+	}
+	g, err := giturls.Parse(cfg.Remotes["origin"].URLs[0])
+	if err != nil {
+		return "", err
+	}
+	return strings.Replace(g.Path, ".git", "", -1), nil
 }
