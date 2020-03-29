@@ -12,10 +12,12 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"fmt"
 	"sync"
 	"unicode"
 
 	"github.com/zieckey/goini"
+	"github.com/karrick/godirwalk"
 )
 
 const (
@@ -23,7 +25,7 @@ const (
 )
 
 var (
-	commentPrefixes        = [...]string{"TODO: ", "FIXME: ", "BUG: ", "HACK: "}
+	commentPrefixes        = [...]string{"TODO: ", "FIXME: ", "BUG: ", "HACK: ", "URGENT: ", "REFS: "}
 	emptyRunes             = [...]rune{}
 	categoryIniKey         = "category"
 	issueIniKey            = "issue"
@@ -83,6 +85,49 @@ func NewToDoGenerator(root string, filters []string, minWords, minChars int) *To
 // Generate is an entry point to comment generation
 func (td *ToDoGenerator) Generate() ([]*ToDoComment, error) {
 	matchesCount := 0
+
+	err := godirwalk.Walk(td.root, &godirwalk.Options{
+		Callback: func(osPathname string, de *godirwalk.Dirent) error {
+			if *verboseFlag {
+				fmt.Printf("%s %s\n", de.ModeType(), osPathname)
+			}
+			//if !de.Mode().IsRegular() {
+			//	return nil
+			//}
+
+			anyMatch := false
+			for _, f := range td.filters {
+				if f.MatchString(osPathname) {
+					anyMatch = true
+					break
+				}
+			}
+			if !anyMatch && len(td.filters) > 0 {
+				return nil
+			}
+
+			matchesCount++
+			td.commentsWG.Add(1)
+			go td.parseFile(osPathname)
+
+			return nil
+		},
+		ErrorCallback: func(osPathname string, err error) godirwalk.ErrorAction {
+			if *verboseFlag {
+				fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+			}
+			// For the purposes of this example, a simple SkipNode will suffice,
+			// although in reality perhaps additional logic might be called for.
+			return godirwalk.SkipNode
+		},
+		Unsorted: true, // set true for faster yet non-deterministic enumeration (see godoc)
+	})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+
+	/*
 	err := filepath.Walk(td.root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -113,6 +158,7 @@ func (td *ToDoGenerator) Generate() ([]*ToDoComment, error) {
 	if err != nil {
 		return nil, err
 	}
+	*/
 
 	log.Printf("Matched files: %v", matchesCount)
 	td.commentsWG.Wait()

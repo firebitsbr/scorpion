@@ -1,0 +1,4 @@
+github.com/karrick/godirwalk v1.15.5 h1:ErdAEFW/cKxQ5+9Gm/hopxB8ki21/di+vyNb9mHnHrA=
+github.com/karrick/godirwalk v1.15.5/go.mod h1:j4mkqPuvaLI8mp1DroR3P6ad7cyYd4c1qeJ3RV7ULlk=
+github.com/zieckey/goini v0.0.0-20180118150432-0da17d361d26 h1:E0lEWrifmR0ACbGf5PLji1XbW6rtIXLHCXO/YOqi0AE=
+github.com/zieckey/goini v0.0.0-20180118150432-0da17d361d26/go.mod h1:TQpdgg7I9+PFIkatlx/dnZyZb4iZyCUx1HJj4rXi3+E=

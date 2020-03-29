@@ -1,0 +1,20 @@
+2020/03/29 16:20:51 ------------------------------
+2020/03/29 16:20:51 scorpion log started
+2020/03/29 16:20:51 Using [] filters
+2020/03/29 16:20:51 Current root is /Volumes/HardDrive/go/src/github.com/qorpress/scorpion
+2020/03/29 16:20:52 Current branch is master
+2020/03/29 16:20:52 Current author is x0rzkov
+2020/03/29 16:20:52 Current project is scorpion
+2020/03/29 16:20:52 Matched files: 379
+2020/03/29 16:20:52 Skipping comment duplicate in README.md:19
+2020/03/29 16:20:52 Generation took 1.103131833s
+2020/03/29 16:21:26 ------------------------------
+2020/03/29 16:21:26 scorpion log started
+2020/03/29 16:21:26 Current root is /Volumes/HardDrive/go/src/github.com/qorpress/scorpion
+2020/03/29 16:21:26 Using [] filters
+2020/03/29 16:21:26 Matched files: 379
+2020/03/29 16:21:26 Current branch is master
+2020/03/29 16:21:26 Skipping comment duplicate in README.md:19
+2020/03/29 16:21:26 Current author is x0rzkov
+2020/03/29 16:21:26 Generation took 402.207796ms
+2020/03/29 16:21:26 Current project is scorpion
